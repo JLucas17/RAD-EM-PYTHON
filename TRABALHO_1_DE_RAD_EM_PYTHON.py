@@ -14,6 +14,7 @@ while n == 1:
         print("|--Insira as suas Informações --")
 
         # Informações pessoais
+        # Insira os dados
 
         Arquivo.write("-> Cpf: ")
         Cpf = Arquivo.write(str(input("Informe seu cpf: ")) + "\n")
@@ -34,7 +35,8 @@ while n == 1:
         Conta = Arquivo.write(str(input("Informe a sua conta: ")) + "\n")
 
      # Informações da conta
-
+     # Insira os dados da conta
+    
         Arquivo.write("-> Agência: ")
         Agência = Arquivo.write(str(input("Informe a sua agência: ")) + "\n")
 
@@ -142,11 +144,13 @@ while n == 1:
 import psycopg2
 from psycopg2 import OperationalError
 
-#Criando a conexão com o banco de dados Postgresql
+# Criando a conexão com o banco de dados Postgresql
+# Dados do banco de dados postgresql alterados
 # Insirindo os dados para a conexão com o banco de dados
 
+
 def create_connection(rad_db, username, pwd, hostname, db_port):
-connection = None
+ connection = None
 
 try:       
     conn = psycopg2.connect(
@@ -156,11 +160,12 @@ try:
             host = hostname,
             port = db_port)
 
-#Tratamento de exceções
+# Tratamento de exceções
 
 print("Conexão com o banco ", db_name, " foi bem sucedida")
 except OperationalError as e:
-        print(f"O erro '{e}' ocorreu")
+print(f"O erro '{e}' ocorreu")
+
 return connection
 
 def create_database(connection, query):
@@ -182,6 +187,7 @@ def create_table(connection, query):
         print(f"O erro '{e}' ocorreu")
 
 # Conexão com o banco de dados default
+
 connection = create_connection("postgres, jlucas13, adm10, localhost, 5432")
 
 create_database_query = "CREATE DATABASE Trabalho_RAD"
@@ -192,7 +198,7 @@ connection.close()
 
 connection = create_connection("Trabalho_RAD", "postgres", "admin12345", "127.0.0.1", "5432")
 
-#Criação da tabelas pessoa e conta
+# Criação da tabela Pessoa
 
 
 cur = conn.cursor()
@@ -200,11 +206,52 @@ cur = conn.cursor()
 
 table_Pessoa_query = ''' CREATE TABELA Pessoa (
                         CPF char(15) PRIMARY KEY,
-                        Nome varchar(50) NOT NULL,
+                        Primeiro_Nome varchar(50) NOT NULL,
+                        Nome_Do_Meio varchar(50) NOT NULL,
                         Sobrenome varchar(50) NOT NULL,
                         Idade int CONSTRAINT idade_positiva CHECK (idade >= 0),
                         Conta varchar(30) NOT NULL '''
-                        
+
+commit() 
+
+
+cur = conn.cursor()
+
+# Copiar dados entre um arquivo e uma tabela
+# Copiar dados para tabela Pessoa
+
+# Me embasei pelo site para phttps://www.postgresql.org/docs/current/sql-copy.html para copiar os dados entre um arquivo e uma tabela 
+
+# Criação da tabela Pessoa
+
+COPY { table_name [ ( column_Pessoa [Primeiro_Nome, Nome_Do Meio, Sobrenome, Idade, Conta] ) ] | ( query ) }
+FROM { 'nomes_pessoas' | STDIN }
+[ [ WITH ]
+          [ BINARY ]
+          [ DELIMITER [ AS ] 'delimiter_character' ]
+          [ NULL [ AS ] 'null_string' ]
+          [ CSV [ HEADER ]
+                [ QUOTE [ AS ] 'quote_character' ]
+                [ ESCAPE [ AS ] 'escape_character' ]
+                [ FORCE NOT NULL column_Pessoa [, ...] ] ] ]
+
+COPY { table_name [ ( column_Pessoa [Primeiro_Nome, Nome_Do Meio, Sobrenome, Idade, Conta] ) ] | ( query ) }
+TO { 'Trabalho Rad.py'| STDOUT }
+[ [ WITH ]
+          [ BINARY ]
+          [ DELIMITER [ AS ] 'delimiter_character' ]
+          [ NULL [ AS ] 'null_string' ]
+          [ CSV [ HEADER ]
+                [ QUOTE [ AS ] 'quote_character' ]
+                [ ESCAPE [ AS ] 'escape_character' ]
+                [ FORCE QUOTE { column_Pessoa [, ...] | * } ] ] ]
+
+conn.commit()
+
+cur = conn.cursor()
+
+# Criação da tabela Conta
+
 
 table_Conta_query= """CREATE TABELA IF NOT EXISTS Conta (
                         Agencia integer NOT NULL,
@@ -215,53 +262,107 @@ table_Conta_query= """CREATE TABELA IF NOT EXISTS Conta (
 )
 """
 
+# Copiar dados entre um arquivo e uma tabela
+# Copiar dados para tabela Conta
 
-# Inserindo valores
+#Me embasei pelo site para phttps://www.postgresql.org/docs/current/sql-copy.html para copiar os dados entre um arquivo e uma tabela 
 
-table_insert_pessoa = '''INSERT INTO Conta (Agencia, Saldo, Gerente, Titular)'
-VALUES = (101.010.101.00, 1010, 50, 'Leonardo', 'Matheus Castro')
-''''
+COPY { tableConta [ ( column_Conta [Agencia, Numero, Saldo, Gerente, Titular] ) ] | ( query ) }
+FROM { 'contas' | STDIN }
+[ [ WITH ]
+          [ BINARY ]
+          [ DELIMITER [ AS ] 'delimiter_character' ]
+          [ NULL [ AS ] 'null_string' ]
+          [ CSV [ HEADER ]
+                [ QUOTE [ AS ] 'quote_character' ]
+                [ ESCAPE [ AS ] 'escape_character' ]
+                [ FORCE NOT NULL column_Conta [, ...] ] ] ]
 
-table_insert_conta = '''INSERT INTO Pessoa (CPF, Nome, Sobrenome, Idade, Conta)' 
-insert_values = (11121.3, 'Carlos Lucas', 'Sampaio', 25, 'Poupanca')
-'''
+COPY { tableConta [ ( column_Conta [Agencia, Numero, Saldo, Gerente, Titular] ) ] | ( query ) }
+TO { 'Trabalho_Rad.py' | STDOUT }
+[ [ WITH ]
+          [ BINARY ]
+          [ DELIMITER [ AS ] 'delimiter_character' ]
+          [ NULL [ AS ] 'null_string' ]
+          [ CSV [ HEADER ]
+                [ QUOTE [ AS ] 'quote_character' ]
+                [ ESCAPE [ AS ] 'escape_character' ]
+                [ FORCE QUOTE { column_Conta [, ...] | * } ] ] ]
+
+conn.commit()
 
 insert_table(connection, table_insert_endereco)
 insert_table(connection, table_insert_pessoa)
 
 connection.close()
 
+connection = create_connection("postgres, jlucas13, adm10, localhost, 5432")
+
+cur = conn.cursor()
+
+# Estou deixando a função SELECT, DELETE e UPDATE em forma de comentario para não intefirir no código
+# quando precisar alterar informações no banco de dados, só inserir os dados que deseja ser alterado
+
+#////////////////////////////////////////////////////////////////////////////////////////////////////
+#////////////////////////////////////////////////////////////////////////////////////////////////////
+
 # Implementando função Select
+# Insira os dados para para selecionar
 
-q1 = """
-SELECT *
-FROM Pessoa;
-"""
+#q1 = """
+#SELECT * ''   ('insira o dado a ser selecioado')
+#FROM Pessoa;
+#"""
 
-# Implementando função Delete 
+#q1 = """
+#SELECT * ''   ('insira o dado a ser selecioado')
+#FROM Conta;
+#"""
 
-DELETE FROM Pessoa
- WHERE CPF = 101.010.101.00;
+#////////////////////////////////////////////////////////////////////////////////////////////////////
+#////////////////////////////////////////////////////////////////////////////////////////////////////
 
+# Implementando função Delete
+# Insira os dados para deletar 
+
+#DELETE FROM Pessoa
+#WHERE CPF = ('condição para ser deletado')
+
+#DELETE FROM Conta
+#WHERE CPF = ('condição para ser deletado')
 
 
  # Implementando função Update
+ # Insira os dados para Atualizar
 
-UPDATE  
-    Pessoa 
-SET
- descrição = 'Idade',
-   idade  =  26 ,
-WHERE
-  CPF= 101.010.101.00
+ #////////////////////////////////////////////////////////////////////////////////////////////////////
+ #////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  conn.commit()
+#UPDATE  
+#    Pessoa 
+#SET
+#descrição = (insira a descrição),
+#   (dado ao ser atualizado)  =  ('novo valor'),
+#WHERE
+#  CPF =  ('condição para ser alterado')
 
+#UPDATE  
+#    Conta 
+#SET
+#descrição = (insira a descrição),
+#   (dado ao ser atualizado)  =  ('novo valor'),
+#WHERE
+#  CPF =  ('condição para ser alterado')
 
+conn.commit()
+
+connection.close()
 
 connection = create_connection("Trabalho_RAD", "postgres", "admin12345", "127.0.0.1", "5432")
 
-def select_table(connection, query):
+cur = conn.cursor()
+
+def select_Pessoa(connection, query):
     connection.autocommit = True
     cursor = connection.cursor()
     try:
@@ -270,11 +371,12 @@ def select_table(connection, query):
 
         lista_consulta = cursor.fetchall()
         for Pessoa in lNome_consulta:
-            print(linha)
+            print()
 
         cursor.close()
     except OperationalError as e:
         print(f"O erro '{e}' ocorreu")
 
+conn.commit()
         
 connection.close()
