@@ -128,3 +128,153 @@ while n == 1:
 
         print("||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||")
         n = int(input("pressione [1] para voltar ao MENU, pressione [2] para Sair" ))
+        
+        
+        
+        
+        
+        
+        
+        /////////////////////////////////////////////////////////////////////////////////////////
+        
+        Implementação Do Banco De Dados
+        
+import psycopg2
+from psycopg2 import OperationalError
+
+#Criando a conexão com o banco de dados Postgresql
+# Insirindo os dados para a conexão com o banco de dados
+
+def create_connection(rad_db, username, pwd, hostname, db_port):
+connection = None
+
+try:       
+    conn = psycopg2.connect(
+            database = rad_db
+            user = username,
+            password = pwd,
+            host = hostname,
+            port = db_port)
+
+#Tratamento de exceções
+
+print("Conexão com o banco ", db_name, " foi bem sucedida")
+except OperationalError as e:
+        print(f"O erro '{e}' ocorreu")
+return connection
+
+def create_database(connection, query):
+    connection.autocommit = True
+    cursor = connection.cursor()
+    try:
+        cursor.execute(query)
+        print("Query executada com sucesso")
+    except OperationalError as e:
+        print(f"O erro '{e}' ocorreu")
+
+def create_table(connection, query):
+    connection.autocommit = True
+    cursor = connection.cursor()
+    try:
+        cursor.execute(query)
+        print("Tabela criada com sucesso!")
+    except OperationalError as e:
+        print(f"O erro '{e}' ocorreu")
+
+# Conexão com o banco de dados default
+connection = create_connection("postgres, jlucas13, adm10, localhost, 5432")
+
+create_database_query = "CREATE DATABASE Trabalho_RAD"
+create_database(connection, create_database_query)
+
+connection.close()
+
+
+connection = create_connection("Trabalho_RAD", "postgres", "admin12345", "127.0.0.1", "5432")
+
+#Criação da tabelas pessoa e conta
+
+
+cur = conn.cursor()
+
+
+table_Pessoa_query = ''' CREATE TABELA Pessoa (
+                        CPF char(15) PRIMARY KEY,
+                        Nome varchar(50) NOT NULL,
+                        Sobrenome varchar(50) NOT NULL,
+                        Idade int CONSTRAINT idade_positiva CHECK (idade >= 0),
+                        Conta varchar(30) NOT NULL '''
+                        
+
+table_Conta_query= """CREATE TABELA IF NOT EXISTS Conta (
+                        Agencia integer NOT NULL,
+                        Numero integer NOT NULL,
+                        Saldo CONSTRAINT saldo_positivo CHECK (saldo <= 0),
+                        Gerente varchar(50) FOREIGN KEY(Gerente) REFERENCES Pessoa(CPF) NOT NULL,
+                        Titular varchar(50) NOT NULL FOREIGN KEY(Titular) REFERENCES Pessoa(CPF),
+)
+"""
+
+
+# Inserindo valores
+
+table_insert_pessoa = '''INSERT INTO Conta (Agencia, Saldo, Gerente, Titular)'
+VALUES = (101.010.101.00, 1010, 50, 'Leonardo', 'Matheus Castro')
+''''
+
+table_insert_conta = '''INSERT INTO Pessoa (CPF, Nome, Sobrenome, Idade, Conta)' 
+insert_values = (11121.3, 'Carlos Lucas', 'Sampaio', 25, 'Poupanca')
+'''
+
+insert_table(connection, table_insert_endereco)
+insert_table(connection, table_insert_pessoa)
+
+connection.close()
+
+# Implementando função Select
+
+q1 = """
+SELECT *
+FROM Pessoa;
+"""
+
+# Implementando função Delete 
+
+DELETE FROM Pessoa
+ WHERE CPF = 101.010.101.00;
+
+
+
+ # Implementando função Update
+
+UPDATE  
+    Pessoa 
+SET
+ descrição = 'Idade',
+   idade  =  26 ,
+WHERE
+  CPF= 101.010.101.00
+
+  conn.commit()
+
+
+
+connection = create_connection("Trabalho_RAD", "postgres", "admin12345", "127.0.0.1", "5432")
+
+def select_table(connection, query):
+    connection.autocommit = True
+    cursor = connection.cursor()
+    try:
+        cursor.execute(query)
+        print("Consulta feita com sucesso!")
+
+        lista_consulta = cursor.fetchall()
+        for Pessoa in lNome_consulta:
+            print(linha)
+
+        cursor.close()
+    except OperationalError as e:
+        print(f"O erro '{e}' ocorreu")
+
+        
+connection.close()
