@@ -65,8 +65,6 @@ while n == 1:
         print("O arquivo não pôde ser lido porque não foi encontrado ou não existe")
 
 
-
-
     if selecionar == 3:
 
         print("|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||")
@@ -122,24 +120,14 @@ while n == 1:
             except:
                 print("!!!O nome foi escrito de forma incorreta!!!")
 
-
-
-
-
     else:
 
         print("||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||")
         n = int(input("pressione [1] para voltar ao MENU, pressione [2] para Sair" ))
         
+        #/////////////////////////////////////////////////////////////////////////////////////////
         
-        
-        
-        
-        
-        
-        /////////////////////////////////////////////////////////////////////////////////////////
-        
-        Implementação Do Banco De Dados
+Implementação Do Banco De Dados
         
 import psycopg2
 from psycopg2 import OperationalError
