@@ -1,5 +1,4 @@
 import tkinter as tk
-from tkinter import ttk
 
 contador = 0  # variável flag
 
@@ -10,7 +9,7 @@ def contador_label (lblRotulo):
         lblRotulo.config(text=str(contador))
         lblRotulo.after(1000, funcao_contar)
 
-funcao_contar()
+    funcao_contar()
 
 janela = tk.Tk()
 janela.title("RAD EM Python")
